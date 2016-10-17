@@ -1,5 +1,5 @@
 all:
-	gcc -Wall -o ram ram.c
+	gcc -Wall -fshort-enums -o ram ram.c
 
 clean:
 	rm ram
