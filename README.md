@@ -17,20 +17,20 @@ All instructions follow the pattern
 
 Instruction | Description
 ------------|------------
-ADD | akku += data[<operand>]
-SUB | akku -= data[<operand>]
-MUL | akku \*= data[<operand>]
-DIV | akku /= data[<operand>]
-LDA | akku = data[<operand>]
-LDK | akku = <operand>
-STA | data[<operand>] = akku
-INP | read a number from stdin to data[<operand>]
-OUT | print data[<operand>] to stdout
-HLT | halt execution and use <operand> as exitcode
-JMP | PC = <operand>
-JEZ | if (akku == 0) PC = <operand>
-JNE | if (akku != 0) PC = <operand>
-JLZ | if (akku < 0) PC = <operand>
-JLE | if (akku <= 0) PC = <operand>
-JGZ | if (akku > 0) PC = <operand>
-JGE | if (akku >= 0) PC = <operand>
+ADD | `akku += data[<operand>]`
+SUB | `akku -= data[<operand>]`
+MUL | `akku *= data[<operand>]`
+DIV | `akku /= data[<operand>]`
+LDA | `akku = data[<operand>]`
+LDK | `akku = <operand>`
+STA | `data[<operand>] = akku`
+INP | `read a number from stdin to data[<operand>]`
+OUT | `print data[<operand>] to stdout`
+HLT | `halt execution and use <operand> as exitcode`
+JMP | `PC = <operand>`
+JEZ | `if (akku == 0) PC = <operand>`
+JNE | `if (akku != 0) PC = <operand>`
+JLZ | `if (akku < 0) PC = <operand>`
+JLE | `if (akku <= 0) PC = <operand>`
+JGZ | `if (akku > 0) PC = <operand>`
+JGE | `if (akku >= 0) PC = <operand>`
