@@ -52,7 +52,7 @@ void compile(FILE*);
 /* compile a single line of code */
 unsigned int compile_line(char*, unsigned int);
 /* execute the compiled program */
-int execute();
+int execute(void);
 
 int
 main(int argc, char **argv)
@@ -100,7 +100,7 @@ trim(char *out, size_t len, const char *str)
         end--;
     }
 
-    out_size = (end - str) < len-1 ? (end-str) : len;
+    out_size = (size_t)(end - str) < len-1 ? (size_t)(end-str) : len;
 
     memcpy(out, str, out_size);
     out[out_size] = '\0';
@@ -194,10 +194,10 @@ compile_line(char *line, unsigned int cnt)
 
 /* executes a compiled RAM program */
 int
-execute()
+execute(void)
 {
     char data[BUFFER_SIZE];
-    char akku;
+    char akku = 0;
     unsigned char pc = 0;
     unsigned int ptr = BUFFER_SIZE;
     while (--ptr) { data[ptr] = 0; }
