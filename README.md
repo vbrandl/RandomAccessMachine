@@ -2,11 +2,11 @@
 
 ## General
 
-This is my implementation of a ramdom-access machine. It is based on a 8-bit architecture so the biggest usable address is 255 and the biggest possible value is 127 since this implementation can also handle negetive numbers.
+this is my implementation of a random-access machine. It is based on a 8-bit architecture so the biggest usable address is 255 and the biggest possible value is 127 since this implementation can also handle negetive numbers.
 
 In contrast to the model of a RAM, the accumulator is a own register and not located at data[0]
 
-Comments are intruduced by `;`
+Comments are introduced by `;`
 
 ## Instructions
 
