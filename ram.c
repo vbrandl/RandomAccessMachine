@@ -48,9 +48,9 @@ static struct instruction PROG[BUFFER_SIZE];
 /* trim a string */
 size_t trim(char*, size_t, const char*);
 /* compiles a file containing RAM code */
-void compile(FILE*);
+unsigned int compile(FILE*);
 /* compile a single line of code */
-unsigned int compile_line(char*, unsigned int);
+int compile_line(char*, unsigned int);
 /* execute the compiled program */
 int execute(void);
 
@@ -68,10 +68,15 @@ main(int argc, char **argv)
         exit(1);
     }
 
-    compile(fp);
-    execute();
+    int ret;
+    if (compile(fp)) {
+        ret = execute();
+    } else {
+        ret = EXIT_FAILURE;
+    }
+    fclose(fp);
 
-    return 0;
+    return ret;
 }
 
 /* trims a string str of length len and writes the result to out.
@@ -109,21 +114,25 @@ trim(char *out, size_t len, const char *str)
 }
 
 /* compiles a file fp line by line, skipping comments and empty lines */
-void
+unsigned int
 compile(FILE *fp)
 {
     unsigned int cnt = 0;
     char line[LINE_SIZE];
     while (NULL != fgets(line, LINE_SIZE, fp) && cnt < BUFFER_SIZE) {
-        if (compile_line(line, cnt)) {
+        int status = compile_line(line, cnt);
+        if (1 == status) {
             cnt++;
+        } else if (-1 == status) {
+            return 0;
         }
     }
+    return 1;
 }
 
-/* compiles a single line, returns 0 if the line is empty or a comment, 1 if the line was compiled or terminates in case of a invalid instruction.
+/* compiles a single line, returns 0 if the line is empty or a comment, 1 if the line was compiled or -1 in case of a invalid instruction.
  * The compiled instruction is written to cnt in PROG */
-unsigned int
+int
 compile_line(char *line, unsigned int cnt)
 {
     char *tmp, *clean_line, *endptr;
@@ -138,6 +147,7 @@ compile_line(char *line, unsigned int cnt)
 
     tmp = strtok(clean_line, " ");
     if (NULL == tmp) {
+        free(clean_line);
         return 0;
     } else if (strcasecmp(tmp, "add") == 0) {
         instr.operator = ADD;
@@ -175,15 +185,19 @@ compile_line(char *line, unsigned int cnt)
         instr.operator = JGE;
     } else {
         fprintf(stderr, "invalid operator \"%s\" in line\n\"%s\"\n", tmp, line);
-        exit(1);
+        free(clean_line);
+        return -1;
     }
 
     tmp = strtok(NULL, " ");
     long int operand = strtol(tmp, &endptr, 0);
     if (0 == operand && strcmp(tmp, endptr) == 0) {
         fprintf(stderr, "invalid operand \"%s\" ind line\n\"%s\"\n", tmp, line);
-        exit(1);
+        free(clean_line);
+        return -1;
     }
+
+    free(clean_line);
 
     instr.operand = operand;
 
@@ -211,10 +225,11 @@ execute(void)
             case LDK: akku = PROG[pc].operand; break;
             case STA: data[(unsigned char)PROG[pc].operand] = akku; break;
             case INP:
+                printf("-> ");
                 scanf("%hhd", &data[(unsigned char)PROG[pc].operand]);
                 break;
             case OUT: printf("%d\n", data[(unsigned char)PROG[pc].operand]); break;
-            case HLT: exit(PROG[pc].operand); break;
+            case HLT: return PROG[pc].operand;
             case JMP: pc = (unsigned char)PROG[pc].operand; continue;
             case JEZ:
                 if (0 == akku) {
@@ -254,7 +269,7 @@ execute(void)
                 break;
             default:
                 fprintf(stderr, "unknown error. illegal code has been compiled!\n");
-                exit(1);
+                return 1;
         }
         pc++;
     }
